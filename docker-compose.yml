@@ -1,0 +1,36 @@
+version: '3.4'
+
+networks:
+  apilojabackend:
+
+services:
+  apiloja:
+    build:
+      context: .
+      dockerfile: DockerfileBack
+
+    ports:
+      - "1012:8080"
+    environment:
+      - DATABASE_HOST=apilojadb
+      - DATABASE_PORT=5432
+      - DATABASE_USER=postgres
+      - DATABASE_PASSWORD=SenhaSegura@@
+      - DATABASE_NAME=ApiLoja
+    networks:
+      - apilojabackend
+
+  apilojadb:
+    image: postgres:latest
+
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: SenhaSegura@@
+      POSTGRES_DB: ApiLoja
+    volumes:
+      - ./Database/create_table.sql:/docker-entrypoint-initdb.d/1_create_table.sql
+      - ./Database/alter_table.sql:/docker-entrypoint-initdb.d/2_alter_table.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - apilojabackend
